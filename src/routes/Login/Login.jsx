@@ -17,14 +17,49 @@ export default function Login() {
         //Preenchendo o objUsuário com o auxílio do operador SPREAD.
         setUsuario({...usuario,[name]:value});
     }
-
     
+    //Criando a função handleSubmit que realizará a validação dos digitados pelo usuário, contra os dados recebidos da nossa API-JSON.
+    const handleSubmit = async  (e)=>{
+        e.preventDefault();
+
+        //Declarando uma variável que vai conter o usuário retornado na validação:
+        let user;
+
+        try {
+            const response = await fetch("http://localhost:5000/usuarios");
+            if(response.ok){
+                const data = await response.json();
+
+                //Realizando a validação utilizando find.
+                user = data.find((u)=> u.email == usuario.email && u.senha == usuario.senha);
+
+                if(user){
+                    alert('Login realizado com sucesso!');
+                    //Gerando o token do usuário:
+                    const token = Math.random().toString(32).substring(2) + Math.random().toString(32).substring(2);
+
+                    //Armazenar o token na sessionStorage:
+                    sessionStorage.setItem("token-user", token);
+                }else{
+                    alert('Senha ou usuário inválidos!!');
+                    setUsuario({
+                        email:"",
+                        senha:"",
+                    });
+                }
+
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
   return (
     <div>
             <h1>Identificação de Usuários</h1>
 
             <div>
-                <form >
+                <form onSubmit={handleSubmit}>
                     <fieldset>
                         <legend>LOGIN</legend>
                         <div>
@@ -44,4 +79,3 @@ export default function Login() {
     </div>
   )
 }
-
