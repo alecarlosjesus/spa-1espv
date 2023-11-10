@@ -2,6 +2,8 @@ import { useState } from "react"
 
 export default function Login() {
 
+    const [msgStatus, setMsgStatus] = useState("");
+
     //Criar um useState para armazenar o objUsuário, que será preenchido no Formulário.{email,senha}.
     const [usuario, setUsuario] = useState({
         email: "",
@@ -34,18 +36,30 @@ export default function Login() {
                 user = data.find((u)=> u.email == usuario.email && u.senha == usuario.senha);
 
                 if(user){
-                    alert('Login realizado com sucesso!');
+
+                    setMsgStatus('Login realizado com sucesso!')
+
                     //Gerando o token do usuário:
                     const token = Math.random().toString(32).substring(2) + Math.random().toString(32).substring(2);
 
                     //Armazenar o token na sessionStorage:
                     sessionStorage.setItem("token-user", token);
+                    
+                    setTimeout(()=>{
+                        window.location = "/";
+                    },5000);
+
                 }else{
-                    alert('Senha ou usuário inválidos!!');
-                    setUsuario({
-                        email:"",
-                        senha:"",
-                    });
+                    setMsgStatus('Senha ou usuário inválidos!!');
+                    
+                    setTimeout(()=>{
+                        setMsgStatus("");
+                        setUsuario({
+                            email:"",
+                            senha:"",
+                        });
+                    },5000);
+
                 }
 
             }
@@ -58,13 +72,15 @@ export default function Login() {
     <div>
             <h1>Identificação de Usuários</h1>
 
+                <h2>{msgStatus}</h2>
+
             <div>
                 <form onSubmit={handleSubmit}>
                     <fieldset>
                         <legend>LOGIN</legend>
                         <div>
                             <label htmlFor="idEmail">EMAIL:</label>
-                            <input type="email" name="email" id="idEmail" placeholder="Digite seu EMAIL:" value={usuario.nome} onChange={handleChange}/>
+                            <input type="email" name="email" id="idEmail" placeholder="Digite seu EMAIL:" value={usuario.email} onChange={handleChange}/>
                         </div>
                         <div>
                             <label htmlFor="idSenha">SENHA:</label>
